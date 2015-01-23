@@ -15,6 +15,11 @@
     "xls",
     "converter"
   ],
+  "files": [
+    "LICENSE",
+    "bin",
+    "README.md"
+  ],
   "author": "Neil Freeman",
   "license": "MIT",
   "bugs": {
