@@ -25,41 +25,66 @@ program.parse(process.argv);
 
 // set options
 var
-    sheet = '',
-    group = '',
-    csv = '',
     opts = {
         FS: program.fieldSep,
         RS: program.rowSep
     },
     filename = program.args[0],
-    reader = (filename === "-") ? j.read : j.readFile,
-    converted = reader(filename),
-    XL = (converted[0].utils.make_csv) ? converted[0] : XLSX,
-    workbook = converted[1],
-    sheets = (program.sheets) ? program.sheets : workbook.SheetNames,
-    groups = (program.groups) ? program.groups : sheets,
-    re = new RegExp('[^' + program.fieldSep + ']'),
-    grouper = function (g) { return function(x) { return g + program.fieldSep + x; }; },
-    add_group_name = grouper(program.groupName),
-    goodLine = function (x) { return x.search(re) > -1 && x.length > -1; },
-    writer = concat(function(data) { console.log(data); });
+    writer = (program.output) ? fs.createWriteStream(program.output, {flags: 'w'}) : concat(function(data) {console.log(data);});
 
-for (var i = 0, s = sheets.length; i < s; i++) {
-    sheet = sheets[i];
-    add_group = grouper(groups[i]);
+// Allow for piping
 
-    csv = XL.utils.make_csv(workbook.Sheets[sheet], opts).split('\n');
+if (filename === "-") {
 
-    if (i === 0) {
-        firstline = add_group_name(csv[0]);
-        mutated = csv.splice(1).filter(goodLine).map(add_group);
-        csv = [firstline].concat(mutated);
-    }
-    else if (program.rmLines > 0) {
-        csv = csv.splice(program.rmLines).filter(goodLine).map(add_group);
-    }
-    writer.write(csv.join('\n') + '\n');
+    process.stdin.pipe(concat(function(data){
+        w = j.read(data);
+        sheetstack(w);
+    }));
+
+} else {
+
+    converted = j.readFile(filename);
+    sheetstack(converted);
+
 }
 
-writer.end();
+function sheetstack(converted) {
+    var XL = (converted[0].utils.make_csv) ? converted[0] : XLSX,
+        workbook = converted[1],
+        sheets = (program.sheets) ? program.sheets : workbook.SheetNames,
+        groups = (program.groups) ? program.groups : sheets,
+        re = new RegExp('[^' + program.fieldSep + ']');
+
+    function grouper(g) {
+        return function(x) {
+            return g + program.fieldSep + x;
+        };
+    }
+
+    function goodLine(x) {
+        return x.search(re) > -1 && x.length > -1;
+    }
+
+    var add_group_name = grouper(program.groupName);
+
+    var sheet, group, csv;
+
+    for (var i = 0, s = sheets.length; i < s; i++) {
+        sheet = sheets[i];
+        add_group = grouper(groups[i]);
+
+        csv = XL.utils.make_csv(workbook.Sheets[sheet], opts).split('\n');
+
+        if (i === 0) {
+            firstline = add_group_name(csv[0]);
+            mutated = csv.splice(1).filter(goodLine).map(add_group);
+            csv = [firstline].concat(mutated);
+        }
+        else if (program.rmLines > 0) {
+            csv = csv.splice(program.rmLines).filter(goodLine).map(add_group);
+        }
+        writer.write(csv.join('\n') + '\n');
+    }
+
+    writer.end();
+}
