@@ -1,0 +1,30 @@
+{
+  "name": "sheetstack",
+  "version": "0.1.0",
+  "description": "Combine multiple XLS sheets into a single CSV",
+  "main": "./bin/sheetstack.js",
+  "bin": {
+    "sheetstack": "./bin/sheetstack.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/fitnr/sheetstack"
+  },
+  "keywords": [
+    "csv",
+    "xls",
+    "converter"
+  ],
+  "author": "Neil Freeman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fitnr/sheetstack/issues"
+  },
+  "homepage": "https://github.com/fitnr/sheetstack",
+  "dependencies": {
+    "commander": "^2.6.0",
+    "concat-stream": "^1.4.7",
+    "j": "^0.4.3",
+    "xlsx": "^0.7.12"
+  }
+}
