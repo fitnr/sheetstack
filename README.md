@@ -60,15 +60,15 @@ dogs,Scooby Doo,Shaggy
 The `--groups` option specifies custom values for the grouping column, `--group-name` sets the value for the top of the column.
 
 ````
-$ sheetstack --groups canine,feline --group-name species
+$ sheetstack --groups canis,felis --group-name genus
 
 species,name,best friend
-canine,Pluto,Mickey
-canine,Santa's Little Helper,Bart
-canine,Scooby Doo,Shaggy
-feline,Cat in the Hat,the fish
-feline,Garfield,Jon
-feline,Hello Kitty,you
+canis,Pluto,Mickey
+canis,Santa's Little Helper,Bart
+canis,Scooby Doo,Shaggy
+felis,Cat in the Hat,the fish
+felis,Garfield,Jon
+felis,Hello Kitty,you
 ````
 
 ### Removing leading lines
