@@ -1,9 +1,9 @@
 #/bin/bash
 
 # Join together sheets of an XLS with csvstack
-# Requires j and csvkit
+# Requires j
 usage() {
-echo "usage: xls_to_stack [OPTIONS] <file>
+echo "usage: sheetstack [OPTIONS] <file>
 Combine XLS or XLSX sheets into a single CSV
 
 options:

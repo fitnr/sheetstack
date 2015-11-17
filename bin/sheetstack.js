@@ -7,7 +7,7 @@ var j = require('j'),
     XLSX = require('xlsx'),
     concat = require('concat-stream');
 
-var version = '0.1.0';
+var version = '0.1.2';
 
 function list(val) { return val.split(','); }
 
@@ -38,14 +38,12 @@ var
 // Allow for piping
 
 if (filename === "-") {
-
     process.stdin.pipe(concat(function(data){
         w = j.read(data);
         sheetstack(w);
     }));
 
 } else {
-
     converted = j.readFile(filename);
     sheetstack(converted);
 
