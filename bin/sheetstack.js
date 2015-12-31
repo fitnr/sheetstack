@@ -4,10 +4,10 @@ var j = require('j'),
     fs = require('fs'),
     stream = require('stream'),
     program = require('commander'),
-    XLSX = require('xlsx'),
-    concat = require('concat-stream');
+    concat = require('concat-stream'),
+    sheetstack = require('../index');
 
-var version = '0.1.2';
+var version = '0.1.3';
 
 function list(val) { return val.split(','); }
 
@@ -27,65 +27,25 @@ program
 program.parse(process.argv);
 
 // set options
-var
-    opts = {
-        FS: program.fieldSep,
-        RS: program.rowSep
-    },
-    filename = program.args[0],
-    writer = (program.output) ? fs.createWriteStream(program.output, {flags: 'w'}) : concat(function(data) {console.log(data);});
+var filename = program.args[0],
+    writer = (program.output) ? fs.createWriteStream(program.output, {flags: 'w'}) : concat(function(data) {
+        console.log(data);
+    }),
+    callback = function(err, csv) {
+        if (err) throw err;
+
+        writer.write(csv);
+        writer.end();
+    };
 
 // Allow for piping
-
 if (filename === "-") {
     process.stdin.pipe(concat(function(data){
         w = j.read(data);
-        sheetstack(w);
+        sheetstack(w, program, callback);
     }));
 
 } else {
     converted = j.readFile(filename);
-    sheetstack(converted);
-
-}
-
-function sheetstack(converted) {
-    var XL = (converted[0].utils.make_csv) ? converted[0] : XLSX,
-        workbook = converted[1],
-        sheets = (program.sheets) ? program.sheets : workbook.SheetNames,
-        groups = (program.groups) ? program.groups : sheets,
-        re = new RegExp('[^' + program.fieldSep + ']');
-
-    function grouper(g) {
-        return function(x) {
-            return g + program.fieldSep + x;
-        };
-    }
-
-    function goodLine(x) {
-        return x.search(re) > -1 && x.length > -1;
-    }
-
-    var add_group_name = grouper(program.groupName);
-
-    var sheet, group, csv;
-
-    for (var i = 0, s = sheets.length; i < s; i++) {
-        sheet = sheets[i];
-        add_group = grouper(groups[i]);
-
-        csv = XL.utils.make_csv(workbook.Sheets[sheet], opts).split('\n');
-
-        if (i === 0) {
-            firstline = add_group_name(csv[0]);
-            mutated = csv.splice(1).filter(goodLine).map(add_group);
-            csv = [firstline].concat(mutated);
-        }
-        else if (program.rmLines > 0) {
-            csv = csv.splice(program.rmLines).filter(goodLine).map(add_group);
-        }
-        writer.write(csv.join('\n') + '\n');
-    }
-
-    writer.end();
+    sheetstack(converted, program, callback);
 }

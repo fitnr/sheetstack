@@ -23,6 +23,9 @@
     "bin",
     "README.md"
   ],
+  "scripts": {
+    "test": "node test/test.js"
+  },
   "author": "Neil Freeman",
   "license": "MIT",
   "bugs": {
@@ -30,9 +33,9 @@
   },
   "homepage": "https://github.com/fitnr/sheetstack",
   "dependencies": {
-    "commander": "^2.6.0",
-    "concat-stream": "^1.4.7",
+    "commander": "^2.9.0",
+    "concat-stream": "^1.5.1",
     "j": "^0.4.3",
-    "xlsx": "^0.7.12"
+    "xlsx": "^0.8.0"
   }
 }
