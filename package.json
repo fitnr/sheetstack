@@ -1,6 +1,6 @@
 {
   "name": "sheetstack",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Combine multiple XLS sheets into a single CSV",
   "main": "./bin/sheetstack.js",
   "bin": {
