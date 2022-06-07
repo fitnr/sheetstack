@@ -1,5 +1,6 @@
 var sheetstack = require('../index');
 var j = require('j');
+
 var callback = function(err, data) {
     if (err) console.error(err);
     console.assert(data.indexOf('dogs') > -1);

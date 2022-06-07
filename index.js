@@ -1,6 +1,3 @@
-#!/usr/bin/env node
-'use strict';
-
 var XLSX = require('xlsx');
 
 function grouper(g, sep) {
@@ -23,7 +20,7 @@ function sheetstack(data, config, callback) {
     :callback function. Should take err, string arguments
     */
     try {
-        var XL = (data[0].utils.make_csv) ? data[0] : XLSX,
+        var XL = (data[0].utils.sheet_to_csv) ? data[0] : XLSX,
             workbook = data[1],
             sheets = (config.sheets) ? config.sheets : workbook.SheetNames,
             groups = (config.groups) ? config.groups : sheets,
@@ -45,7 +42,7 @@ function sheetstack(data, config, callback) {
             // function for prefixing group
             var add_group = grouper(groups[i], fieldSep);
             // pull rows from sheet
-            var rows = XL.utils.make_csv(workbook.Sheets[sheets[i]], opts).split('\n');
+            var rows = XL.utils.sheet_to_csv(workbook.Sheets[sheets[i]], opts).split('\n');
             var body;
 
             // on the first sheet, add the group name
@@ -61,7 +58,7 @@ function sheetstack(data, config, callback) {
             csv += body.join('\n') + '\n';
         }
 
-        callback(false, csv);
+        callback(null, csv);
 
     } catch(e) {
         callback(e);
